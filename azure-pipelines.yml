@@ -21,6 +21,11 @@ steps:
     ng build --prod
   displayName: 'npm install and build'
 
+- script: |
+    cd
+    dir
+  displayName: 'cd and dir'
+
 - task: AzureFileCopy@4
   inputs:
     SourcePath: 'dist/*'
