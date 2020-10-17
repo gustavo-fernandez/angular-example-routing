@@ -21,17 +21,3 @@ steps:
     ng build --prod
     dir
   displayName: 'npm install and build'
-
-- script: |
-    cd
-    dir
-  displayName: 'cd and dir'
-
-- task: AzureFileCopy@4
-  inputs:
-    SourcePath: 'dist/*'
-    azureSubscription: 'Azure Pass - Sponsorship(09bcda39-d435-4e13-b048-5294a566503d)'
-    Destination: 'AzureBlob'
-    storage: 'storageaccount20201016'
-    ContainerName: '$web'
-    BlobPrefix: 'prueba'
