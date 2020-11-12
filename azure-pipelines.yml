@@ -34,6 +34,7 @@ stages:
         ArtifactName: 'angular-app'
         publishLocation: 'Container'
 - stage: Deploy
+  dependsOn: Build
   displayName: Deploy to Storage Account
   jobs:
   - job: Deploy
