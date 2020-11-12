@@ -48,7 +48,7 @@ stages:
     # List files
     - script: |
         pwd
-        dir $(System.ArtifactsDirectory)
+        dir $(System.ArtifactsDirectory)/angularapp
       displayName: List directory's files
     # Delete Resources in Storage Account
     - task: AzureCLI@2
@@ -58,11 +58,11 @@ stages:
         scriptType: bash
         scriptLocation: inlineScript
         inlineScript: 'az storage blob delete-batch --source \$web --account-name angulartest01 --pattern ''[!backoffice]*'' --auth-mode login'
-    # Delete Resources in Storage Account
+    # Copy Resources to Storage Account
     - task: AzureCLI@2
       displayName: 'Copy Resources'
       inputs:
         azureSubscription: 'angular-storage-account-contributor'
         scriptType: bash
         scriptLocation: inlineScript
-        inlineScript: 'az storage blob upload-batch -s "$(System.DefaultWorkingDirectory)/_gustavo-fernandez.angular-example-routing/angular-app" -d \$"web" --account-name angulartest01'
+        inlineScript: 'az storage blob upload-batch -s "$(System.ArtifactsDirectory)/angularapp" -d \$"web" --account-name angulartest01'
