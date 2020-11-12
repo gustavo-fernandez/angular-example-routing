@@ -1,34 +1,46 @@
-# Node.js with Angular
-# Build a Node.js project that uses Angular.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
-trigger:
-- master
-
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install -g @angular/cli
-    npm install
-    ng build --prod
-  displayName: 'npm install and build'
-
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: 'dist/angular-starter'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'angular-app'
-    publishLocation: 'Container'
+stages:
+- stage: Build
+  displayName: Build Angular App
+  jobs:
+  - job: Build
+    displayName: Build
+    steps:
+    # Install Node JS
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '10.x'
+      displayName: 'Install Node.js'
+    # Install Angular CLI and dependencies
+    - script: |
+        npm install -g @angular/cli
+        npm install
+        ng build --prod
+      displayName: 'npm install and build'
+    # Copy dist folder
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: 'dist/angular-starter'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    # Publish Build as artifact
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'angular-app'
+        publishLocation: 'Container'
+- stage: Deploy
+  displayName: Deploy to Storage Account
+  jobs:
+  - job: Deploy
+    displayName: Deploy
+    steps:
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - script: ls -l $(System.ArtifactsDirectory)
+      displayName: List directory's files
