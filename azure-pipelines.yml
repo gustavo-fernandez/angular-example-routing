@@ -48,7 +48,7 @@ stages:
     # List files
     - script: |
         pwd
-        dir $(System.ArtifactsDirectory)/angularapp
+        dir $(System.ArtifactsDirectory)/angular-app
       displayName: List directory's files
     # Delete Resources in Storage Account
     - task: AzureCLI@2
