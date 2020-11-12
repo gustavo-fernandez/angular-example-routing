@@ -42,5 +42,24 @@ stages:
         buildType: 'current'
         downloadType: 'specific'
         downloadPath: '$(System.ArtifactsDirectory)'
-    - script: ls -l $(System.ArtifactsDirectory)
+    # List files
+    - script: |
+        pwd
+        dir $(System.ArtifactsDirectory)
       displayName: List directory's files
+    # Delete Resources in Storage Account
+    - task: AzureCLI@2
+      displayName: 'Delete Resources'
+      inputs:
+        azureSubscription: 'angular-storage-account-contributor'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: 'az storage blob delete-batch --source \$web --account-name angulartest01 --pattern ''[!backoffice]*'' --auth-mode login'
+    # Delete Resources in Storage Account
+    - task: AzureCLI@2
+      displayName: 'Copy Resources'
+      inputs:
+        azureSubscription: 'angular-storage-account-contributor'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: 'az storage blob upload-batch -s "$(System.DefaultWorkingDirectory)/_gustavo-fernandez.angular-example-routing/angular-app" -d \$"web" --account-name angulartest01'
